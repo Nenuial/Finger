@@ -4,6 +4,7 @@ project:
     - R/cleanup.R
     - R/fetch.R
     - R/setup.R
+    - R/setup_champ.R
   post-render:
     - R/finish.R
 

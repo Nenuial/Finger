@@ -18,15 +18,37 @@ setup_classes <- function(result_path) {
   result_ongoing <- TRUE
   #if (stringr::str_detect(class_data$Actuel, "Carré")) result_ongoing <- TRUE
   
+  if(!is.na(class_data$Init)) {
+    file_copy(path = here("_templates/Results_champ.qmd"), 
+              new_path = here(paste0("results/Results_champ_", class_id, ".qmd")), 
+              overwrite = T) -> qmd_path
+    
+    yml_replace(
+      file = qmd_path,
+      what = list(
+        title = class_data$Nom,
+        subtitle = class_data$Catégorie,
+        Epreuve = class_data$Épreuve,
+        order = class_data$Ordre,
+        params = list(
+          manche_1 = dir_ls("data/champ", regex = paste0(".*R.{1,2}sultats_", class_data$Init, "\\.xls")),
+          manche_2 = result_path
+        )
+      )
+    )
+    
+    return()
+  }
+  
   file_copy(path = here("_templates/Results.qmd"), 
-            new_path = here(paste0("results/Results_", class_id, ".qmd")), 
+            new_path = here(paste0("results/Results_champ_", class_id, ".qmd")), 
             overwrite = T) -> qmd_path
   
   yml_replace(
     file = qmd_path,
     what = list(
       title = class_data$Nom,
-      subtitle = paste0('Catégorie - ', class_data$Catégorie),
+      subtitle = class_data$Catégorie,
       Epreuve = class_data$Épreuve,
       order = class_data$Ordre,
       params = list(
@@ -84,6 +106,47 @@ current_classes <- function(...) {
   
   carre_filename <- stringr::str_replace(dots$Actuel, " ", "_")
   
+  
+  if(!is.na(class_data$Init)) {
+    
+    file_copy(path = here("_templates/Carre_result_champ.qmd"),
+              new_path = here(paste0("actuel/", carre_filename, ".qmd")), 
+              overwrite = T) -> qmd_path
+    
+    yml_replace(
+      file = qmd_path,
+      what = list(
+        title = dots$Actuel,
+        subtitle = paste(dots$Nom, "-", dots$Catégorie),
+        params = list(
+          manche_1 = dir_ls("data/champ", regex = paste0(".*R.{1,2}sultats_", dots$Init, "\\.xls")),
+          manche_2 = result_path
+        )
+      )
+    )
+    
+    file_copy(path = here("_templates/Carre_result_champ.qmd"),
+              new_path = here(paste0("actuel/", carre_filename, "_live.qmd")), 
+              overwrite = T) -> qmd_path
+    
+    yml_replace(
+      file = qmd_path,
+      what = list(
+        title = dots$Actuel,
+        subtitle = paste(dots$Nom, "-", dots$Catégorie),
+        css = "../live.css",
+        "include-in-header" = "../live.html",
+        params = list(
+          manche_1 = dir_ls("data/champ", regex = paste0(".*R.{1,2}sultats_", dots$Init, "\\.xls")),
+          manche_2 = result_path
+        )
+      )
+    )
+    
+    return()
+  }
+  
+  
   file_copy(path = here("_templates/Carre_result.qmd"),
             new_path = here(paste0("actuel/", carre_filename, ".qmd")), 
             overwrite = T) -> qmd_path
@@ -117,20 +180,20 @@ current_classes <- function(...) {
   )
 }
 
-drive_get("Concours/Datafiles/Finger") |> 
+drive_get("Concours/Datafiles/FingerChamp") |> 
   read_sheet() |> 
   dplyr::mutate(`Épreuve` = as.character(`Épreuve`)) |> 
   dplyr::mutate(Actuel = as.character(Actuel)) |> 
   dplyr::mutate(Actuel = dplyr::if_else(is.na(Actuel), "", Actuel)) -> classes
 
-dir_ls(here("data"), regexp = ".*R.{1,2}sultats_(.{1,3})\\.xls") -> results
+dir_ls(here("data/champ"), regexp = ".*R.{1,2}sultats_(.{1,3})\\.xls") -> results
 
 results |> 
   purrr::walk(setup_classes)
 
-# c("Carré A", "Carré B") |> 
-#   purrr::walk(carre_off)
-# 
-# classes |> 
-#   dplyr::filter(stringr::str_detect(Actuel, "Carré")) |> 
-#   purrr::pwalk(current_classes)
+c("Carré A") |> 
+  purrr::walk(carre_off)
+
+classes |> 
+  dplyr::filter(stringr::str_detect(Actuel, "Carré")) |> 
+  purrr::pwalk(current_classes)

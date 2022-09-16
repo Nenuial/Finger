@@ -1,0 +1,17 @@
+---
+title: Placeholder
+subtitle: Placeholder
+params:
+  manche_1: result/null.ext
+  manche_2: result/null.ext
+---
+
+::: column-page
+```{r}
+rsvps::event_dr_results_championship(
+  here::here(params$manche_1),
+  here::here(params$manche_2),
+  TRUE
+)
+```
+:::
