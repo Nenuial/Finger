@@ -97,7 +97,7 @@ current_classes <- function(...) {
   dots <- list(...)
   
   dir_ls(
-    path = here("data"),
+    path = here("data/champ"),
     regexp = paste0("_", dots$Épreuve,"[.]xls")
     
   ) -> result_path
