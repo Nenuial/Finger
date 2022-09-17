@@ -8,4 +8,4 @@ listing:
   fields: [Epreuve, title]
 ---
 
-Vous trouverez sur ce site les résultats pour les épreuves du concours de dressage de La Chaux-de-Fonds au manège Finger du 10 au 11 septembre.
+Vous trouverez sur ce site les résultats pour les épreuves du concours de dressage de La Chaux-de-Fonds au manège Finger du 10 au 11 septembre et du samedi 17 septembre.

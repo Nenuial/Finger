@@ -107,7 +107,7 @@ current_classes <- function(...) {
   carre_filename <- stringr::str_replace(dots$Actuel, " ", "_")
   
   
-  if(!is.na(class_data$Init)) {
+  if(!is.na(dots$Init)) {
     
     file_copy(path = here("_templates/Carre_result_champ.qmd"),
               new_path = here(paste0("actuel/", carre_filename, ".qmd")), 
